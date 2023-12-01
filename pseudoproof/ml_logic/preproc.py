@@ -75,28 +75,45 @@ def df_count_occurences(digit, df):
     return df_from_series
 
 
-# apply all preproc for training together
-def preproc(df, test_split=0.3):
+def digit_freq(df):
     """
-    Take a csv file with label to transform it in usable X and y train and test datasets
+    Takes an input df and transform it into a 20 column-dfs with variables digits occurence.
     """
-    df_cleaned = clean_data(df)
+    df_0 = df_count_occurences(0, df)
+    df_0.columns = [f"f_{each}" for each in df_0.columns]
+    df_1 = df_count_occurences(1, df)
+    df_1.columns = [f"s_{each}" for each in df_1.columns]
+    concat_df = pd.concat([df_0, df_1], axis=1).astype("int")
 
-    X = df_cleaned.drop(columns=["y"])
-    y = df_cleaned[["y"]]
+    divisor = concat_df.shape[1]  # OG nmumber of features AFTER dropna()
+    digit_freq_df = concat_df.div(divisor)
 
-    X_scaled = scale_data(X)
+    nco = [
+        "f_0",
+        "f_1",
+        "f_2",
+        "f_3",
+        "f_4",
+        "f_5",
+        "f_6",
+        "f_7",
+        "f_8",
+        "f_9",
+        "s_0",
+        "s_1",
+        "s_2",
+        "s_3",
+        "s_4",
+        "s_5",
+        "s_6",
+        "s_7",
+        "s_8",
+        "s_9",
+    ]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_scaled, y, test_split=test_split
-    )
+    digit_freq_df = digit_freq_df[nco]
 
-    return X_train, X_test, y_train, y_test
+    print("✅ digits frequency computed ")
+    print(f"final shape: {digit_freq_df.shape}")
 
-
-def digitise(df, digits=[1, 2], test_split=0.3):
-    """
-    Take a csv file with label to transform it in usable X and y train and test datasets.
-    Return digit frequency instead of quantitative data.
-    """
-    pass
+    return digit_freq_df
