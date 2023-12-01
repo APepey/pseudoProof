@@ -26,9 +26,13 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 
 
+#GridSearch function
+from ml_logic.gridsearch import best_params
+
+
+
+
 # All RNN-related functions, requiring specific parameters
-
-
 def initialize_NNmodel():
     """
     Initialize the Neural Network with random weights
@@ -131,10 +135,11 @@ def evaluate_RNNmodel(
     return metrics
 
 
+
 # All 5 models that we use for basic prediction baselines
 
 # define the differents models we can choose from
-knn_model = KNeighborsClassifier(n_neighbors=5)
+knn_model = KNeighborsClassifier(**best_params("knn", X_train, y_train))
 nb_model = GaussianNB()
 gbc_model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1)
 svm_model = SVC(kernel="rbf", C=1, random_state=42)
@@ -150,26 +155,35 @@ MODELS = {
 }
 
 
-def fit(model_category, X_train, y_train):
-    """
-    Fit values according to one of the 5 model options
-    """
-    valid = {"gradient_boosting", "knn", "naive_bayes", "random_forest", "svm"}
-    if model_category not in valid:
-        raise ValueError("results: status must be one of %r." % valid)
+# Initialize the model using the best parameters
+best_rf_params = best_params("random_forest", X_train, y_train)
+rf_model = RandomForestClassifier(**best_rf_params)
 
-    # fetching the model correpsonding to the chosen parameter
-    key_value_pairs = MODELS.items()
-    for key, value in key_value_pairs:
-        if value == model_category:
-            model = key
+# Fit the model
+fitted_rf_model = fit(rf_model, X_train, y_train)
 
-    # fitting the model
-    fitted_model = model.fit(X_train, y_train)  # will not work,
 
-    print("✅ Model trained")
 
-    return fitted_model
+# def fit(model_category, X_train, y_train):
+#     """
+#     Fit values according to one of the 5 model options
+#     """
+#     valid = {"gradient_boosting", "knn", "naive_bayes", "random_forest", "svm"}
+#     if model_category not in valid:
+#         raise ValueError("results: status must be one of %r." % valid)
+
+#     # fetching the model correpsonding to the chosen parameter
+#     key_value_pairs = MODELS.items()
+#     for key, value in key_value_pairs:
+#         if value == model_category:
+#             model = key
+
+#     # fitting the model
+#     fitted_model = model.fit(X_train, y_train)  # will not work,
+
+#     print("✅ Model trained")
+
+#     return fitted_model
 
 
 def predict(fitted_model, X_test):
