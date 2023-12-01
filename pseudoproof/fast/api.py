@@ -8,7 +8,7 @@ from pseudoproof.ml_logic.model import *
 from pseudoproof.ml_logic.preproc import clean_data, scale_data
 from pseudoproof.cloud.load_models import load_model
 
-
+# creating decorator
 app = FastAPI()
 
 # Allow all requests (optional, good for development purposes)
