@@ -1,12 +1,13 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-
+from io import BytesIO, StringIO
 import numpy as np
 import pandas as pd
 import io
 from pseudoproof.ml_logic.model import *
-from pseudoproof.ml_logic.preproc import clean_data, scale_data
-from pseudoproof.cloud.load_models import load_model
+from pseudoproof.ml_logic.preproc import clean_data, scale_data, digit_freq
+from pseudoproof.cloud.load_models import load_models
+import csv
 
 # creating decorator
 app = FastAPI()
@@ -20,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-app.state.model = load_model()
+app.state.model = load_models()
 
 
 @app.get("/status")
@@ -32,19 +33,38 @@ def index():
 contents = pd.read_csv("./raw_data/datasets/complete_dataset_true_fake.csv")
 
 
+# working! modif preproc to have always 20 cols and train on that. complete models dict
 @app.post("/predict")
-def predict(csv: UploadFile = File(...)):
-    df = clean_data(contents)
-    X = df.drop(columns=["y"])
-    y = df[["y"]]
-    X_scaled = scale_data(X)
+async def predict(csv: UploadFile = File(...)):
+    bytes_oobject = await csv.read()
+    byte_string = str(bytes_oobject, "utf-8")
+    data = StringIO(byte_string)
 
-    model = app.state.model
-    prediction = model.predict(X_scaled)[0]
-    return {"prediction": float(prediction)}
+    with open("input.csv", "w") as file:
+        print(data.getvalue(), file=file)
+
+    df = pd.read_csv("input.csv")
+
+    X_clean = clean_data(df)
+    X_scaled = scale_data(X_clean)
+    X_final = digit_freq(X_scaled)
+
+    model_dict = app.state.model
+    model_list = list(model_dict.keys())
+
+    prediction = {}
+
+    for model_name in model_list:
+        clean_name = model_name.split(".")[0]
+
+        model = model_dict[model_name]
+        model_prediction = float(model.predict(X_final)[0])
+        prediction[clean_name] = model_prediction
+
+    return prediction
 
 
-@app.get("/neural_predict")
+@app.get("/predict")
 def NNmodel_predict():
     # preprocessing
     df = clean_data(contents)
@@ -80,15 +100,3 @@ def NNmodel_predict():
 
     if y_pred == int(y_test["y"]):
         return {"result": "Banger"}
-
-
-@app.get("/predict")
-def predict():
-    X_train, X_test, y_train, y_test = preproc(contents)
-    layer_shape = X_train.shape[1:]
-    model = initialize_NNmodel(layer_shape)
-    compile_NNmodel(model)
-    trained_model, history = train_NNmodel(model, X_train, y_train)
-    y_pred = trained_model.predict(X_test)[0]
-
-    return y_pred

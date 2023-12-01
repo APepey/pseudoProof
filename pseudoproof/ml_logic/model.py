@@ -158,7 +158,7 @@ def fit(model_category, X_train, y_train):
     if model_category not in valid:
         raise ValueError("results: status must be one of %r." % valid)
 
-    # fetching the model correpsonding to the chosen parameter
+    # fetching the model corresponding to the chosen parameter
     key_value_pairs = MODELS.items()
     for key, value in key_value_pairs:
         if value == model_category:
@@ -170,15 +170,6 @@ def fit(model_category, X_train, y_train):
     print("✅ Model trained")
 
     return fitted_model
-
-
-def predict(fitted_model, X_test):
-    """
-    Return predicted value form an already fitted model.
-    """
-    y_pred = fitted_model.predict(X_test)
-
-    return y_pred
 
 
 def evaluate(fitted_model, X, y, cv=5):
