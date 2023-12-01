@@ -33,12 +33,18 @@ from ml_logic.gridsearch import best_params
 
 
 # All RNN-related functions, requiring specific parameters
+<<<<<<< HEAD:ml_logic/model.py
 def initialize_NNmodel():
+=======
+
+
+def initialize_NNmodel(input_shape: tuple):
+>>>>>>> 4b0ee290fe94e07f96987a4468c75a429ebe6dea:pseudoproof/ml_logic/model.py
     """
     Initialize the Neural Network with random weights
     """
     rnn_model = Sequential()
-    rnn_model.add(Dense(10, input_shape=(20,), activation="relu"))
+    rnn_model.add(Dense(10, input_shape=input_shape, activation="relu"))
     rnn_model.add(Dense(20, activation="relu"))
     rnn_model.add(Dense(15, activation="relu"))
     rnn_model.add(Dense(8, activation="relu"))

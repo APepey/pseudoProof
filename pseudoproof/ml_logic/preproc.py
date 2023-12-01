@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
 from collections import Counter
+
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
 
 # clean data: rem dupes and nas
@@ -19,7 +21,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # remove duplicates for our final version of a clean df
     df_cleaned = df_nonas.drop_duplicates()
 
-    print("✅ data cleaned")
+    print("✅ data cleaned of NAs and duplicates")
 
     return df_cleaned
 
@@ -71,3 +73,30 @@ def df_count_occurences(digit, df):
     df_from_series = pd.DataFrame(completed_series.tolist())  # .dropna(axis=1)
 
     return df_from_series
+
+
+# apply all preproc for training together
+def preproc(df, test_split=0.3):
+    """
+    Take a csv file with label to transform it in usable X and y train and test datasets
+    """
+    df_cleaned = clean_data(df)
+
+    X = df_cleaned.drop(columns=["y"])
+    y = df_cleaned[["y"]]
+
+    X_scaled = scale_data(X)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_scaled, y, test_split=test_split
+    )
+
+    return X_train, X_test, y_train, y_test
+
+
+def digitise(df, digits=[1, 2], test_split=0.3):
+    """
+    Take a csv file with label to transform it in usable X and y train and test datasets.
+    Return digit frequency instead of quantitative data.
+    """
+    pass
