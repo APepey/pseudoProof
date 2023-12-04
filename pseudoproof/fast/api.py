@@ -8,6 +8,7 @@ from pseudoproof.ml_logic.model import *
 from pseudoproof.ml_logic.preproc import clean_data, scale_data, digit_freq
 from pseudoproof.cloud.load_models import load_models
 import csv
+import asyncio
 
 # creating decorator
 app = FastAPI()
@@ -21,7 +22,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-app.state.model = load_models()
+
+# app.state.model = asyncio.run(load_models())
+# app.state.model = load_models()
 
 
 @app.get("/status")
@@ -29,7 +32,7 @@ def index():
     return {"status": "ok"}
 
 
-@app.post("/predictOneRow")
+@app.post("/predict_one_row")
 async def predict(csv: UploadFile = File(...), n=0):
     bytes_oobject = await csv.read()
     byte_string = str(bytes_oobject, "utf-8")
@@ -44,7 +47,7 @@ async def predict(csv: UploadFile = File(...), n=0):
     X_scaled = scale_data(X_clean)
     X_final = digit_freq(X_scaled)
 
-    model_dict = app.state.model
+    model_dict = await load_models()  # app.state.model
     model_list = list(model_dict.keys())
 
     prediction = {}
@@ -63,6 +66,7 @@ async def predict(csv: UploadFile = File(...), n=0):
 
 @app.post("/predict")
 async def predict(csv: UploadFile = File(...)):
+    # make the uploaded csv file usable
     bytes_oobject = await csv.read()
     byte_string = str(bytes_oobject, "utf-8")
     data = StringIO(byte_string)
@@ -72,13 +76,16 @@ async def predict(csv: UploadFile = File(...)):
 
     df = pd.read_csv("input.csv")
 
+    # preprocess the data
     X_clean = clean_data(df)
     X_scaled = scale_data(X_clean)
     X_final = digit_freq(X_scaled)
 
-    model_dict = app.state.model
+    # call models
+    model_dict = await load_models()
     model_list = list(model_dict.keys())
 
+    # prepare df and dict to add prediction results
     prediction_df = X_clean.copy()
     pred_percent = {}
 
@@ -98,7 +105,7 @@ async def predict(csv: UploadFile = File(...)):
 
     # create a different df for each model?
 
-    # for a df including all predictions
+    # df including all predictions, dictionary with percentage of fabricated rows per model
     return prediction_df, pred_percent
 
 

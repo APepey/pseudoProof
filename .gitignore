@@ -3,7 +3,7 @@ temp/
 data-exploration/
 output/
 quantitative-data/
-
+.env.yaml
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
