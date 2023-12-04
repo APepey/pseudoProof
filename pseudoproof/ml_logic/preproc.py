@@ -19,7 +19,9 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     else:
         df_nonas = df.dropna(how="any", axis=1)
     # remove duplicates for our final version of a clean df
-    df_cleaned = df_nonas.drop_duplicates()
+    df_nodupes = df_nonas.drop_duplicates()
+    # remove non numerical columns
+    df_cleaned = df_nodupes.select_dtypes(exclude="object")
 
     print("✅ data cleaned of NAs and duplicates")
 
