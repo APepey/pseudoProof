@@ -29,10 +29,6 @@ def index():
     return {"status": "ok"}
 
 
-# contents that were used before working csv import:
-# contents = pd.read_csv("./raw_data/datasets/complete_dataset_true_fake.csv")
-
-
 @app.post("/predictOneRow")
 async def predict(csv: UploadFile = File(...), n=0):
     bytes_oobject = await csv.read()
@@ -83,7 +79,7 @@ async def predict(csv: UploadFile = File(...)):
     model_dict = app.state.model
     model_list = list(model_dict.keys())
 
-    prediction_df = X_scaled.copy()
+    prediction_df = X_clean.copy()
     pred_percent = {}
 
     # creating a table with a new column for corresponding row prediction
@@ -106,7 +102,7 @@ async def predict(csv: UploadFile = File(...)):
     return prediction_df, pred_percent
 
 
-@app.get("/predict")
+@app.get("/NN_predict")
 def NNmodel_predict():
     # preprocessing
     df = clean_data(contents)
