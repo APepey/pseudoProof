@@ -6,5 +6,5 @@ st.write('''
          Hello *world!*
          ''')
 
-df = pd.read_csv('data.csv')
+df = pd.read_csv('./raw_data/datasets/complete_dataset_true_fake.csv')
 st.line_chart(df)
