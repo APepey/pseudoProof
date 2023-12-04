@@ -29,13 +29,12 @@ def index():
     return {"status": "ok"}
 
 
-# adapt contents to dynamically retrieve data
-contents = pd.read_csv("./raw_data/datasets/complete_dataset_true_fake.csv")
+# contents that were used before working csv import:
+# contents = pd.read_csv("./raw_data/datasets/complete_dataset_true_fake.csv")
 
 
-# working! modif preproc to have always 20 cols and train on that. complete models dict
-@app.post("/predict")
-async def predict(csv: UploadFile = File(...)):
+@app.post("/predictOneRow")
+async def predict(csv: UploadFile = File(...), n=0):
     bytes_oobject = await csv.read()
     byte_string = str(bytes_oobject, "utf-8")
     data = StringIO(byte_string)
@@ -58,10 +57,53 @@ async def predict(csv: UploadFile = File(...)):
         clean_name = model_name.split(".")[0]
 
         model = model_dict[model_name]
-        model_prediction = float(model.predict(X_final)[0])
+        model_prediction = float(
+            model.predict(X_final)[n]
+        )  # choosing line to predict here
         prediction[clean_name] = model_prediction
 
     return prediction
+
+
+@app.post("/predict")
+async def predict(csv: UploadFile = File(...)):
+    bytes_oobject = await csv.read()
+    byte_string = str(bytes_oobject, "utf-8")
+    data = StringIO(byte_string)
+
+    with open("input.csv", "w") as file:
+        print(data.getvalue(), file=file)
+
+    df = pd.read_csv("input.csv")
+
+    X_clean = clean_data(df)
+    X_scaled = scale_data(X_clean)
+    X_final = digit_freq(X_scaled)
+
+    model_dict = app.state.model
+    model_list = list(model_dict.keys())
+
+    prediction_df = X_scaled.copy()
+    pred_percent = {}
+
+    # creating a table with a new column for corresponding row prediction
+    for model_name in model_list:
+        # extract model from model name
+        clean_name = model_name.split(".")[0]
+        # retrieve model
+        model = model_dict[model_name]
+        # create a series with all predictioms
+        res_series = model.predict(X_final)
+        # append to a column corresponding to model name and predictions
+        prediction_df[f"prediction_{clean_name}"] = res_series.astype(float)
+        # complete dict with percentage of fabricated rows
+        percent = np.mean(res_series) * 100
+        pred_percent[clean_name] = round(percent, 1)
+
+    # create a different df for each model?
+
+    # for a df including all predictions
+    return prediction_df, pred_percent
 
 
 @app.get("/predict")
@@ -78,10 +120,10 @@ def NNmodel_predict():
 
     # split
 
-    # X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_split=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_split=0.3)
 
-    X_train, X_test = X_scaled[:-1], X_scaled[-1:]
-    y_train, y_test = y[:-1], y[-1:]
+    # X_train, X_test = X_scaled[:-1], X_scaled[-1:]
+    # y_train, y_test = y[:-1], y[-1:]
 
     layer_shape = X_train.shape[1:]
 
