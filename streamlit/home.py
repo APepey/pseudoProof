@@ -24,6 +24,13 @@ load_dotenv()
 url = os.getenv("API_URL")
 
 
+# functions
+@st.cache_data
+def convert_df_to_csv(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode("utf-8")
+
+
 # App title and description
 st.header("PseudoProof")
 st.markdown(
@@ -43,42 +50,37 @@ csv_file_buffer = st.file_uploader(
 )
 
 if csv_file_buffer is not None:
-    col1, col2 = st.columns(2)
+    with st.spinner("Wait for it..."):
+        ### Get bytes from the file buffer
+        csv_bytes = csv_file_buffer.getvalue()
 
-    # with col1:
-    ### Display the image user uploaded
-    # open(csv_file_buffer)  # , caption="Here's the dataset you uploaded ☝️"
+        ### Make request to  API (stream=True to stream response as bytes)
+        res = requests.post(url + "/predict", files={"csv": csv_bytes})
 
-    with col2:
-        with st.spinner("Wait for it..."):
-            ### Get bytes from the file buffer
-            csv_bytes = csv_file_buffer.getvalue()
+        if res.status_code == 200:
+            # fetching data from response
+            pred_bytes = res.content
+            # transforming it into usable data
+            byte_string = str(pred_bytes, "utf-8")
+            data = StringIO(byte_string)
+            # percentage of fake rows
+            # creating the df
+            df_percent = pd.DataFrame(eval(data.getvalue())[1], index=[0])
+            # showing df
+            st.dataframe(df_percent)
+            # original df + corresponding prediction
+            # creating the df
+            df_res = pd.DataFrame(eval(data.getvalue())[0])
+            # showing df
+            st.dataframe(df_res)
+            # downloading
+            st.download_button(
+                label="Download prediction data as CSV",
+                data=convert_df_to_csv(df_res),
+                file_name="PseudoProof_prediction.csv",
+                mime="text/csv",
+            )
 
-            ### Make request to  API (stream=True to stream response as bytes)
-            res = requests.post(url + "/predict", files={"csv": csv_bytes})
-
-            if res.status_code == 200:
-                ### Display the data returned by the API
-                # st.image(res.content, caption="Dataset returned from API ☝️")
-                # percent = res[pred_percent]
-
-                pred_bytes = res.content
-
-                byte_string = str(pred_bytes, "utf-8")
-                data = StringIO(byte_string)
-
-                df_res = pd.DataFrame(eval(data.getvalue())[0])
-
-                df_percent = pd.DataFrame(eval(data.getvalue())[1], index=[0])
-
-                st.dataframe(df_res)
-                st.dataframe(df_percent)
-                # st.header(
-                #     f"According to this knn model, {percent['knn']}% of the uploaded dataframe as been fabricated."
-                # )
-            else:
-                st.markdown("**Oops**, something went wrong. Please try again.")
-                print(res.status_code, res.content)
-
-
-# display df with fabricated rows being highlighted
+        else:
+            st.markdown("**Oops**, something went wrong. Please try again.")
+            print(res.status_code, res.content)
