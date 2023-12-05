@@ -41,7 +41,7 @@ st.markdown("---")
 ### Create a native Streamlit file upload input
 # st.markdown("###")
 csv_file_buffer = st.file_uploader(
-    label="Upload your dataset as a .csv file below", type="csv"
+    label="Upload your dataset as a .csv file:", type="csv"
 )
 
 if csv_file_buffer is not None:
@@ -58,7 +58,7 @@ if csv_file_buffer is not None:
             # transforming it into usable data
             byte_string = str(pred_bytes, "utf-8")
             data = StringIO(byte_string)
-            # percentage of fake rows
+            # percentage of fake rows: to be changed (won't be a df)
             # creating the df
             df_percent = pd.DataFrame(eval(data.getvalue())[1], index=[0])
             # showing df

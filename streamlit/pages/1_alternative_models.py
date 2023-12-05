@@ -28,8 +28,9 @@ def convert_df_to_csv(df):
 st.header("Under the hood")
 st.markdown(
     """
-During the development of PseudoProof, we trained numerous models in order to find the best performing one.\n
-While we recommend using our best-performing model available on the homepage, you can have a look below at our other candidates and their predictions!
+During the development of PseudoProof, we trained six different models to find the best performing one.\n
+XXX model, available on the homepage, was selected as it had the highest accuracy score.\n
+While we recommend using the XXX model, you can still have a look below at our other candidates and their predictions!
 """
 )
 st.markdown("---")
@@ -41,7 +42,7 @@ st.markdown("---")
 ### Create a native Streamlit file upload input
 # st.markdown("###")
 csv_file_buffer = st.file_uploader(
-    label="Upload your dataset as a .csv file below", type="csv"
+    label="Upload your dataset as a .csv file:", type="csv"
 )
 
 if csv_file_buffer is not None:

@@ -14,7 +14,7 @@ st.markdown("---")
 st.markdown(
     """
     Crafted with :heart: & :coffee:\n
-    by Mariano Rubio, Despoina Kotsopoulou and Anaïs Pepey\n
+    by Anaïs Pepey, Despoina Kotsopoulou and Mariano Rubio\n
     during project week @ Le Wagon, Barcelona
     """
 )
