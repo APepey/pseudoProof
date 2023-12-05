@@ -20,8 +20,7 @@ st.set_page_config(
 # url = 'http://api:8000'
 # Example localhost development URL
 # url = 'http://localhost:8000'
-load_dotenv()
-url = os.getenv("API_URL")
+url = "http://127.0.0.1:8000/"
 
 
 # App title and description

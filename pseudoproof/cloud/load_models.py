@@ -36,9 +36,7 @@ async def load_model():
     return model
 
 
-@app.on_event("startup")
-async def startup_event():
-    app.state.model = await load_model()
+
 
 
 async def load_models():

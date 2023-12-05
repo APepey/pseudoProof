@@ -25,7 +25,9 @@ app.add_middleware(
 
 # app.state.model = asyncio.run(load_models())
 # app.state.model = load_models()
-
+# @app.on_event("startup")
+# async def startup_event():
+#     app.state.model = await load_model()
 
 @app.get("/status")
 def index():
