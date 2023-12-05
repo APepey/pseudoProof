@@ -7,16 +7,12 @@ import os
 
 # Set page tab display
 st.set_page_config(
-    page_title="PseudoProof",
+    page_title="About",
     page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Example local Docker container URL
-# url = 'http://api:8000'
-# Example localhost development URL
-# url = 'http://localhost:8000'
 load_dotenv()
 url = os.getenv("API_URL")
 
@@ -29,14 +25,18 @@ def convert_df_to_csv(df):
 
 
 # App title and description
-st.header("PseudoProof: Machine Learning ")
+st.header("Under the hood")
 st.markdown(
     """
-A machine learning model to identify fabricated entries within datasets.\n
+During the development of PseudoProof, we trained numerous models in order to find the best performing one.\n
+While we recommend using our best-performing model available on the homepage, you can have a look below at our other candidates and their predictions!
 """
 )
-
 st.markdown("---")
+
+# some graphs/table/etc with the accuracy of these models?
+
+# create a drop-down option with model names to choose from: one option per model + all models at once?
 
 ### Create a native Streamlit file upload input
 # st.markdown("###")
