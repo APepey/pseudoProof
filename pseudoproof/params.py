@@ -1,6 +1,7 @@
 import os
 
 LOCAL_MODEL_PATH = os.path.expanduser("~/.lewagon/saved_models")
+os.makedirs(LOCAL_MODEL_PATH, exist_ok=True)
 
 # create a dict to access models both as strings and variables
 # MODELS = {

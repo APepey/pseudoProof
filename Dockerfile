@@ -6,22 +6,20 @@ FROM python:3.10-buster
 # This directory will be used as the default location for subsequent commands.f
 # libraries required by OpenCV
 RUN apt-get update
-RUN apt-get install \
-  'ffmpeg'\
-  'libsm6'\
-  'libxext6'  -y
+# RUN apt-get install \
+#   'ffmpeg'\
+#   'libsm6'\
+#   'libxext6'  -y
 # We strip the requirements from useless packages for user
 # This line copies the contents of the requirements_prod.txt file from the host machine
 # to the /prod directory in the container  and renames it to requirements.txt.
-COPY requirementsAPI.txt requirements.txt
+COPY requirements.txt requirements.txt
 # Update pip
 RUN pip install --upgrade pip
 # This line installs the Python dependencies listed in the requirements.txt file using the pip package manager.
 # It will run the file which was originally requirementsAPI.txt
-RUN pip install -r requirements.txt
 # These lines copy the directory, setup.py file, and any associated content from the host machine
 # to the /prod directory in the container.
-COPY face_tally face_tally
 COPY setup.py setup.py
 # This line installs the Python package located in the current directory (.),
 # which includes the contents of the face_tally directory and is specified by the setup.py file.
@@ -35,7 +33,8 @@ COPY Makefile Makefile
 # This line specifies the default command to run when the container starts.
 # It uses uvicorn to run the FastAPI application (taxifare.api.fast:app) with specific host and port settings.
 # The $PORT environment variable is expected to be provided at runtime.
-CMD uvicorn face_tally.API.fast:app --host 0.0.0.0 --port $PORT
+COPY pseudoproof pseudoproof/
+CMD uvicorn pseudoproof.fast.api:app --host 0.0.0.0 --port $PORT
 # IMPORTANT!! Try before if it works of the console with this line:
 # uvicorn face_tally.API.fast:app --reload --port 8000
 ###############################################
@@ -48,3 +47,23 @@ CMD uvicorn face_tally.API.fast:app --host 0.0.0.0 --port $PORT
 # RUN vs CMD:
 # The RUN instruction is used to execute commands during the build process of the Docker image.
 # The CMD instruction is used to provide default command(s) that will be executed when a container is run from the built image.
+
+# FROM python:3.10-buster
+
+# RUN apt-get update
+
+# COPY requirements.txt requirements.txt
+
+# RUN pip install --upgrade pip
+
+# RUN pip install -r requirements.txt
+
+# COPY pseudoproof pseudoproof
+
+# COPY setup.py setup.py
+
+# RUN pip install .
+
+# COPY Makefile Makefile
+
+# CMD uvicorn pseudoproof.fast:app --host 0.0.0.0 --port $PORT

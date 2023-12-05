@@ -115,7 +115,7 @@ def digit_freq(df):
 
     digit_freq_df = digit_freq_df[nco]
 
-    print("✅ digits frequency computed ")
+    print("✅ digits frequency computed")
     print(f"final shape: {digit_freq_df.shape}")
 
     return digit_freq_df
