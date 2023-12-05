@@ -25,6 +25,10 @@ uvicorn
 httpx
 pytest-asyncio
 joblib==1.3.2
-# pickle
+
+
 asyncio
 python-multipart
+streamlit
+
+# pickle

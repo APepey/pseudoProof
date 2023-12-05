@@ -31,6 +31,16 @@ async def download_models() -> None:
     return pickle_names
 
 
+async def load_model():
+    model = await load_models()
+    return model
+
+
+@app.on_event("startup")
+async def startup_event():
+    app.state.model = await load_model()
+
+
 async def load_models():
     "Loads the model from the local pickle file"
     pickle_names = await download_models()

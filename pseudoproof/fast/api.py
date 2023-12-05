@@ -32,43 +32,11 @@ def index():
     return {"status": "ok"}
 
 
-@app.post("/predict_one_row")
-async def predict(csv: UploadFile = File(...), n=0):
-    bytes_oobject = await csv.read()
-    byte_string = str(bytes_oobject, "utf-8")
-    data = StringIO(byte_string)
-
-    with open("input.csv", "w") as file:
-        print(data.getvalue(), file=file)
-
-    df = pd.read_csv("input.csv")
-
-    X_clean = clean_data(df)
-    X_scaled = scale_data(X_clean)
-    X_final = digit_freq(X_scaled)
-
-    model_dict = await load_models()  # app.state.model
-    model_list = list(model_dict.keys())
-
-    prediction = {}
-
-    for model_name in model_list:
-        clean_name = model_name.split(".")[0]
-
-        model = model_dict[model_name]
-        model_prediction = float(
-            model.predict(X_final)[n]
-        )  # choosing line to predict here
-        prediction[clean_name] = model_prediction
-
-    return prediction
-
-
 @app.post("/predict")
 async def predict(csv: UploadFile = File(...)):
     # make the uploaded csv file usable
-    bytes_oobject = await csv.read()
-    byte_string = str(bytes_oobject, "utf-8")
+    bytes_object = await csv.read()
+    byte_string = str(bytes_object, "utf-8")
     data = StringIO(byte_string)
 
     with open("input.csv", "w") as file:
@@ -107,6 +75,39 @@ async def predict(csv: UploadFile = File(...)):
 
     # df including all predictions, dictionary with percentage of fabricated rows per model
     return prediction_df, pred_percent
+
+
+## other functions not in use at the moment
+@app.post("/predict_one_row")
+async def predict(csv: UploadFile = File(...), n=0):
+    bytes_oobject = await csv.read()
+    byte_string = str(bytes_oobject, "utf-8")
+    data = StringIO(byte_string)
+
+    with open("input.csv", "w") as file:
+        print(data.getvalue(), file=file)
+
+    df = pd.read_csv("input.csv")
+
+    X_clean = clean_data(df)
+    X_scaled = scale_data(X_clean)
+    X_final = digit_freq(X_scaled)
+
+    model_dict = await load_models()  # app.state.model
+    model_list = list(model_dict.keys())
+
+    prediction = {}
+
+    for model_name in model_list:
+        clean_name = model_name.split(".")[0]
+
+        model = model_dict[model_name]
+        model_prediction = float(
+            model.predict(X_final)[n]
+        )  # choosing line to predict here
+        prediction[clean_name] = model_prediction
+
+    return prediction
 
 
 @app.get("/NN_predict")
