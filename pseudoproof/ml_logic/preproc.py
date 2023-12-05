@@ -23,7 +23,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # remove non numerical columns
     df_cleaned = df_nodupes.select_dtypes(exclude="object")
 
-    print("✅ data cleaned of NAs and duplicates")
+    print("✅ data cleaned of NAs, duplicates, and non-numerical data")
 
     return df_cleaned
 
