@@ -1,5 +1,4 @@
 import streamlit as st
-import requests
 
 # Set page tab display
 st.set_page_config(

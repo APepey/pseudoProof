@@ -2,7 +2,6 @@ import streamlit as st
 from io import BytesIO, StringIO
 import pandas as pd
 import requests
-from dotenv import load_dotenv
 import os
 
 # Set page tab display
@@ -13,8 +12,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-load_dotenv()
-url = os.getenv("API_URL")
+
+url = "https://pseudoproofimage-rmkp3lpc6a-ew.a.run.app"
 
 
 # functions
@@ -29,8 +28,7 @@ st.header("Under the hood")
 st.markdown(
     """
 During the development of PseudoProof, we trained six different models to find the best performing one.\n
-XXX model, available on the homepage, was selected as it had the highest accuracy score.\n
-While we recommend using the XXX model, you can still have a look below at our other candidates and their predictions!
+While we recommend using random forest model available on the homepage, you can still have a look below at our other candidates and their predictions!
 """
 )
 st.markdown("---")
@@ -63,11 +61,21 @@ if csv_file_buffer is not None:
             # creating the df
             df_percent = pd.DataFrame(eval(data.getvalue())[1], index=[0])
             # showing df
+            st.markdown(
+                """
+Percentage of predicted fabricated data in this dataset, according to each model:
+"""
+            )
             st.dataframe(df_percent)
             # original df + corresponding prediction
             # creating the df
             df_res = pd.DataFrame(eval(data.getvalue())[0])
             # showing df
+            st.markdown(
+                """
+Your dataset completed with the prediction for each individual row:
+"""
+            )
             st.dataframe(df_res)
             # downloading
             st.download_button(

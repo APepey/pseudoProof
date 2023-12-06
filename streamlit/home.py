@@ -2,7 +2,6 @@ import streamlit as st
 from io import BytesIO, StringIO
 import pandas as pd
 import requests
-from dotenv import load_dotenv
 import os
 
 # Set page tab display
@@ -13,12 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Example local Docker container URL
-# url = 'http://api:8000'
-# Example localhost development URL
-# url = 'http://localhost:8000'
-load_dotenv()
-url = os.getenv("API_URL")
+url = "https://pseudoproofimage-rmkp3lpc6a-ew.a.run.app"
 
 
 # functions
@@ -29,10 +23,10 @@ def convert_df_to_csv(df):
 
 
 # App title and description
-st.header("PseudoProof: Machine Learning ")
+st.header("PseudoProof:")
 st.markdown(
     """
-A machine learning model to identify fabricated entries within datasets.\n
+A random forest machine learning model built to identify fabricated entries within datasets.\n
 """
 )
 
@@ -50,7 +44,7 @@ if csv_file_buffer is not None:
         csv_bytes = csv_file_buffer.getvalue()
 
         ### Make request to  API (stream=True to stream response as bytes)
-        res = requests.post(url + "/predict", files={"csv": csv_bytes})
+        res = requests.post(url + "/predict_RF", files={"csv": csv_bytes})
 
         if res.status_code == 200:
             # fetching data from response
@@ -58,11 +52,10 @@ if csv_file_buffer is not None:
             # transforming it into usable data
             byte_string = str(pred_bytes, "utf-8")
             data = StringIO(byte_string)
-            # percentage of fake rows: to be changed (won't be a df)
-            # creating the df
-            df_percent = pd.DataFrame(eval(data.getvalue())[1], index=[0])
-            # showing df
-            st.dataframe(df_percent)
+            # percentage of fake rows
+            df_percent = eval(data.getvalue())[1]
+            # showing percentage
+            st.write(df_percent)
             # original df + corresponding prediction
             # creating the df
             df_res = pd.DataFrame(eval(data.getvalue())[0])

@@ -36,23 +36,29 @@ async def download_models() -> None:
 #     return model
 
 
-@app.on_event("startup")
-async def startup_event():
-    app.state.model = await load_models()
+# @app.on_event("startup")
+# async def startup_event():
+#     app.state.model = await load_models()
+
+
+async def load_RFmodel():
+    """Load the RF model from the local pickle file"""
+    os.makedirs(LOCAL_MODEL_PATH, exist_ok=True)
+    RFmodel = joblib.load(os.path.join(LOCAL_MODEL_PATH, "random_forest.pkl"))
+
+    return RFmodel
 
 
 async def load_models():
-    "Loads the model from the local pickle file"
+    """Loads the model from the local pickle file"""
     pickle_names = await download_models()
     model_dict = {}
 
     os.makedirs(LOCAL_MODEL_PATH, exist_ok=True)
 
     for pickle_file_name in pickle_names:
-        # my_list.append(joblib.load(os.path.join(LOCAL_MODEL_PATH,f'{pickle_file_name}')))
         model_dict[pickle_file_name] = joblib.load(
             os.path.join(LOCAL_MODEL_PATH, f"{pickle_file_name}")
         )
 
-    print(model_dict)
     return model_dict
