@@ -55,6 +55,7 @@ if csv_file_buffer is not None:
             # percentage of fake rows
             df_percent = eval(data.getvalue())[1]
             # showing percentage
+            st.markdown("---")
             st.markdown(
                 f"""
                 ### We estimated that {df_percent}% of the dataset rows have been fabricated.\n
@@ -76,4 +77,3 @@ if csv_file_buffer is not None:
 
         else:
             st.markdown("**Oops**, something went wrong. Please try again.")
-            print(res.status_code, res.content)

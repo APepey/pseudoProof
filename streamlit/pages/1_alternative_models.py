@@ -27,8 +27,14 @@ def convert_df_to_csv(df):
 st.header("Under the hood")
 st.markdown(
     """
-During the development of PseudoProof, we trained six different models to find the best performing one.\n
-While we recommend using random forest model available on the homepage, you can still have a look below at our other candidates and their predictions!
+During the development of PseudoProof, we trained six different models to find the best performing one:\n
+- Gradient Boosting Classifier\n
+- K-Nearest Neighbours (KNN)\n
+- Multi-Layer Perceptron (MLP)\n
+- Naïve Bayes\n
+- Random Forest\n
+- Support Vector Machine (SVM)\n
+While we recommend using our random forest model (available on the homepage), you can still have a look below at our other candidates and their predictions!
 """
 )
 st.markdown("---")
@@ -47,7 +53,6 @@ if csv_file_buffer is not None:
     with st.spinner("Wait for it..."):
         ### Get bytes from the file buffer
         csv_bytes = csv_file_buffer.getvalue()
-
         ### Make request to  API (stream=True to stream response as bytes)
         res = requests.post(url + "/predict", files={"csv": csv_bytes})
 
@@ -60,31 +65,40 @@ if csv_file_buffer is not None:
             # percentage of fake rows
             # creating the df
             df_percent = pd.DataFrame(eval(data.getvalue())[1], index=[0])
+            df_percent_clean = df_percent.reset_index(drop=True)
             # showing df
+            st.markdown("---")
             st.markdown(
                 """
-Percentage of predicted fabricated data in this dataset, according to each model:
+Percentage of fabricated data in this dataset, according to each model:
 """
             )
-            st.dataframe(df_percent)
+            st.dataframe(df_percent_clean)
+            # downloading
+            st.download_button(
+                label="Download percentage table as CSV",
+                data=convert_df_to_csv(df_percent),
+                file_name="PseudoProof_prediction.csv",
+                mime="text/csv",
+            )
             # original df + corresponding prediction
             # creating the df
             df_res = pd.DataFrame(eval(data.getvalue())[0])
             # showing df
+            st.markdown("---")
             st.markdown(
                 """
-Your dataset completed with the prediction for each individual row:
+Your dataset completed with the prediction of each model:
 """
             )
             st.dataframe(df_res)
             # downloading
             st.download_button(
-                label="Download prediction data as CSV",
+                label="Download prediction data table as CSV",
                 data=convert_df_to_csv(df_res),
                 file_name="PseudoProof_prediction.csv",
                 mime="text/csv",
             )
 
         else:
-            print(res.status_code, res.content)
             st.markdown("**Oops**, something went wrong. Please try again.")
