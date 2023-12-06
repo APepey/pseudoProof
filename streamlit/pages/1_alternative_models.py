@@ -86,5 +86,5 @@ Your dataset completed with the prediction for each individual row:
             )
 
         else:
-            st.markdown("**Oops**, something went wrong. Please try again.")
             print(res.status_code, res.content)
+            st.markdown("**Oops**, something went wrong. Please try again.")

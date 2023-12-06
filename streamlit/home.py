@@ -23,7 +23,7 @@ def convert_df_to_csv(df):
 
 
 # App title and description
-st.header("PseudoProof:")
+st.header("PseudoProof")
 st.markdown(
     """
 A random forest machine learning model built to identify fabricated entries within datasets.\n
@@ -55,7 +55,12 @@ if csv_file_buffer is not None:
             # percentage of fake rows
             df_percent = eval(data.getvalue())[1]
             # showing percentage
-            st.write(df_percent)
+            st.markdown(
+                f"""
+                ### We estimated that {df_percent}% of the dataset rows have been fabricated.\n
+                Please see below the details of that prediction:
+                """
+            )
             # original df + corresponding prediction
             # creating the df
             df_res = pd.DataFrame(eval(data.getvalue())[0])
