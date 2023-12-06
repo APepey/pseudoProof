@@ -60,7 +60,7 @@ async def predict(csv: UploadFile = File(...)):
     res_series = model.predict(X_final)
 
     # add to df
-    prediction_df[f"prediction"] = res_series.astype(float)
+    prediction_df["prediction"] = res_series.astype(float)
 
     # create percent of fake
     percent = np.mean(res_series) * 100

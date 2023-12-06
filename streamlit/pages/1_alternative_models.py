@@ -48,6 +48,7 @@ st.markdown("---")
 csv_file_buffer = st.file_uploader(
     label="Upload your dataset as a .csv file:", type="csv"
 )
+st.markdown("---")
 
 if csv_file_buffer is not None:
     with st.spinner("Wait for it..."):
@@ -67,7 +68,6 @@ if csv_file_buffer is not None:
             df_percent = pd.DataFrame(eval(data.getvalue())[1], index=[0])
             df_percent_clean = df_percent.reset_index(drop=True)
             # showing df
-            st.markdown("---")
             st.markdown(
                 """
 Percentage of fabricated data in this dataset, according to each model:
