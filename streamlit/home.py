@@ -66,8 +66,7 @@ if csv_file_buffer is not None:
             if df_percent == 0:
                 st.markdown(
                     f"""
-                ## Congratulations!\n
-                Your dataset is fraud-free!
+                ## Congratulations! Your dataset is fraud-free! :tada:
                 """
                 )
             else:
@@ -76,10 +75,6 @@ if csv_file_buffer is not None:
                 ## This dataset might not be reliable...
                 """
                 )
-                # some fun
-                st.markdown(
-                    "![Alt Text](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.tenor.com%2Fimages%2F43a490c0b385d2cbb2795912be677de4%2Ftenor.gif&f=1&nofb=1&ipt=7173e99eb84864dfd355c2aa730ff368e6abf89f6ebf31f62387b5e6304b8512&ipo=images)"
-                )
             # original df + corresponding prediction
             # creating the df
             df_res = pd.DataFrame(eval(data.getvalue())[0])
@@ -87,7 +82,7 @@ if csv_file_buffer is not None:
             # showing percentage
             st.markdown(
                 f"""
-                ### We estimated that {df_percent}% of the dataset entries has been fabricated.\n
+                ### We estimated that {df_percent}% of the dataset rows have been fabricated.\n
                 Please see below the details of that prediction:
                 """
             )
@@ -104,7 +99,13 @@ if csv_file_buffer is not None:
             # showing highlighted df
             df_res_highlight = df_res.style.apply(highlight_row, axis=1)
             st.dataframe(df_res_highlight)
-
+            # some fun
+            if df_percent == 0:
+                pass
+            else:
+                st.markdown(
+                    "![Alt Text](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.tenor.com%2Fimages%2F43a490c0b385d2cbb2795912be677de4%2Ftenor.gif&f=1&nofb=1&ipt=7173e99eb84864dfd355c2aa730ff368e6abf89f6ebf31f62387b5e6304b8512&ipo=images)"
+                )
         else:
             st.markdown(
                 "**Oops**, something went wrong. Please try again in a few minutes."
