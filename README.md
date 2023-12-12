@@ -8,7 +8,7 @@ Anaïs Pepey, Mariano Rubio and Despoina Kotsopoulou
 Inspired from previous research by Michael S. Bradshaw and Samuel H. Payne  
 https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0260395  
 
-## Basics  
+## How PseudoProof works  
 - Upload a csv dataset you have suspicions about onto the website
 - Let the random forest model do the work...
 - Download the results: the original dataset completed with our prediction per row
