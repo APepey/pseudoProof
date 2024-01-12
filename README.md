@@ -1,5 +1,6 @@
 # PseudoProof
 https://pseudoproof.streamlit.app  
+
 Using ML models and generative AI to identify fabricated datasets in academic papers  
 
 ## Project done @ Le Wagon Bootcamp by:  
@@ -14,3 +15,9 @@ https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0260395
 - Download the results: the original dataset completed with our prediction per row
   - 1: this row has likely been fabricated by a machine
   - 0: this row is likely authentic
+
+## Find below a short video showing how PseudoProof works:
+
+
+https://github.com/APepey/pseudoProof/assets/46807977/901e1940-382f-4763-aade-d71f788ca476
+
