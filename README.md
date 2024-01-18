@@ -19,3 +19,7 @@ https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0260395
 ## PseudoProof demo:
 
 https://github.com/APepey/pseudoProof/assets/46807977/901e1940-382f-4763-aade-d71f788ca476
+
+## PseudoProof presentation @ Le Wagon:
+
+https://youtu.be/RVEVqyTf8X8?feature=shared&t=4245
